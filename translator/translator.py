@@ -11,6 +11,7 @@ commands = {
     "post_response": {"hex_code": 0x02, "name": "post_response"},
     "shell": {"hex_code": 0x10, "name": "shell"},
     "dir": {"hex_code": 0x11, "name": "dir"},
+    "exit": {"hex_code": 0x12, "name": "exit"},
 }
 
 # ============================================================================

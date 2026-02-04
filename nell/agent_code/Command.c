@@ -93,6 +93,11 @@ BOOL handleGetTasking(PParser getTasking)
              LOG("[*] Executing DIR_LIST");
              executeDir(taskParser);
         }
+        else if (taskID == EXIT_CMD && taskParser)
+        {
+             LOG("[*] Executing EXIT_CMD");
+             executeExit(taskParser);
+        }
         else
         {
             LOG("[-] Unknown task or invalid parser");
@@ -304,5 +309,45 @@ BOOL executeDir(PParser arguments)
     PackageDestroy(output);
     LocalFree(taskUuid);
 
+
+    return TRUE;
+}
+
+BOOL executeExit(PParser arguments)
+{
+    // 1. Get Task UUID
+    SIZE_T uuidLen = 0;
+    PBYTE uuidBytes = ParserGetBytes(arguments, &uuidLen);
+    
+    if (uuidBytes)
+    {
+        PCHAR taskUuid = (PCHAR)LocalAlloc(LPTR, uuidLen + 1);
+        if (taskUuid)
+        {
+            memcpy(taskUuid, uuidBytes, uuidLen);
+            taskUuid[uuidLen] = '\0';
+            
+            LOG("[*] Task UUID: %s", taskUuid);
+
+            // Send response saying we are dying
+            PPackage responseTask = PackageCreate();
+            PackageAddByte(responseTask, POST_RESPONSE);
+            PackageAddBytes(responseTask, (PBYTE)taskUuid, uuidLen);
+            
+            char* msg = "Agent exiting...";
+            PackageAddBytes(responseTask, (PBYTE)msg, strlen(msg));
+
+            LOG("[*] Sending Exit response...");
+            PParser ResponseParser = sendPackage(responseTask);
+            if (ResponseParser) ParserDestroy(ResponseParser);
+            
+            PackageDestroy(responseTask);
+            LocalFree(taskUuid);
+        }
+        LocalFree(uuidBytes);
+    }
+
+    LOG("[*] Calling ExitProcess(0)");
+    ExitProcess(0);
     return TRUE;
 }

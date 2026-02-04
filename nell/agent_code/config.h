@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
             #define CONFIG_H
 
-            #define CONFIG_INIT_UUID "cbb90f4e-02cb-4ea6-b5c8-90d29d96b0da"
+            #define CONFIG_INIT_UUID "b54924cf-6d53-4a97-a248-15b4f4344549"
             #define CONFIG_HOSTNAME L"192.168.1.83"
             #define CONFIG_ENDPOINT L"index"
             #define CONFIG_SSL FALSE
@@ -11,8 +11,8 @@
             #define CONFIG_USERAGENT L"Mozilla/5.0"
             #define CONFIG_HTTP_METHOD L"POST"
             #define CONFIG_PORT 80
-            #define CONFIG_SLEEP_TIME 10  // seconds
-            #define CONFIG_JITTER 50 // percentage
+            #define CONFIG_SLEEP_TIME 5  // seconds
+            #define CONFIG_JITTER 25 // percentage
 
             #endif // CONFIG_H
             

