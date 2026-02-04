@@ -20,7 +20,7 @@ Simple C implant for Mythic.
 
 ## Development
 
-Source is located in `agent_code/`. It uses a custom binary protocol for C2 communication.
+Source is located in `/nell/agent_code/`. It uses a custom binary protocol for C2 communication.
 
 1.  **Mythic UI (`builder.py`)**: Defines commands and parameters shown in the web interface.
 2.  **Protocol (`translator.py`)**: Translates Mythic's JSON tasks into the agent's binary format (and vice-versa).
