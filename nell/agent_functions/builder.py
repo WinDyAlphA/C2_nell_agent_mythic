@@ -30,6 +30,18 @@ class BasicPythonAgent(PayloadType):
             default_value="exe"
         ),
         BuildParameter(
+            name="sleep",
+            parameter_type=BuildParameterType.String,
+            description="Sleep interval in seconds",
+            default_value="5"
+        ),
+        BuildParameter(
+            name="jitter",
+            parameter_type=BuildParameterType.String,
+            description="Jitter percentage (0-100)",
+            default_value="25"
+        ),
+        BuildParameter(
             name="debug",
             parameter_type=BuildParameterType.Boolean,
             description="Build with debug symbols and console output",
@@ -101,6 +113,8 @@ class BasicPythonAgent(PayloadType):
             # ============================================================
             
             config_path = self.agent_code_path / "config.h"
+            sleep_val = self.get_parameter("sleep")
+            jitter_val = self.get_parameter("jitter")
             
             config_content = f'''#ifndef CONFIG_H
             #define CONFIG_H
@@ -115,7 +129,8 @@ class BasicPythonAgent(PayloadType):
             #define CONFIG_USERAGENT L"Mozilla/5.0"
             #define CONFIG_HTTP_METHOD L"POST"
             #define CONFIG_PORT {callback_port}
-            #define CONFIG_SLEEP_TIME 5  // seconds
+            #define CONFIG_SLEEP_TIME {sleep_val}  // seconds
+            #define CONFIG_JITTER {jitter_val} // percentage
 
             #endif // CONFIG_H
             '''

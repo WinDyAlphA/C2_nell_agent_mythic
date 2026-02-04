@@ -28,6 +28,21 @@ BOOL routine()
     }
 
     DWORD sleepMs = nellConfig->sleeptime * 1000;
+    
+    if (nellConfig->jitter > 0)
+    {
+        DWORD variation = (sleepMs * nellConfig->jitter) / 100;
+        if (variation > 0)
+        {
+            int offset = (rand() % (variation * 2 + 1)) - variation;
+            if (offset < 0 && (DWORD)(-offset) > sleepMs) {
+                sleepMs = 0;
+            } else {
+                sleepMs += offset;
+            }
+        }
+    }
+
     LOG("[*] routine: Sleeping %d ms...", sleepMs);
     Sleep(sleepMs); 
 

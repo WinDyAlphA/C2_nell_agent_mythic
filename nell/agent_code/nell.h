@@ -19,6 +19,7 @@ typedef struct
 
     
     UINT32 sleeptime;
+    UINT32 jitter;
 } CONFIG_NELL, * PCONFIG_NELL;
 
 extern PCONFIG_NELL nellConfig;

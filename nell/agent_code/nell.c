@@ -37,6 +37,9 @@ BOOL InitConfig(VOID)
     nellConfig->isProxyEnabled = CONFIG_PROXY_ENABLED;
     nellConfig->proxyURL = (PWCHAR)CONFIG_PROXY_URL;
     nellConfig->sleeptime = CONFIG_SLEEP_TIME;
+    nellConfig->jitter = CONFIG_JITTER;
+
+    srand(GetTickCount()); // Seed PRNG for jitter
 
     return TRUE;
 }
