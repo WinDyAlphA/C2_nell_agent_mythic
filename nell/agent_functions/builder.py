@@ -222,6 +222,27 @@ class DirArguments(TaskArguments):
     async def parse_dictionary(self, dictionary_arguments):
         self.load_args_from_dictionary(dictionary_arguments)
 
+class CdArguments(TaskArguments):
+    def __init__(self, command_line, **kwargs):
+        super().__init__(command_line, **kwargs)
+        self.args = [
+            CommandParameter(
+                name="path", 
+                type=ParameterType.String, 
+                description="Path to change to"
+            ),
+        ]
+    
+    async def parse_arguments(self):
+        if len(self.command_line) == 0:
+            raise ValueError("Must supply a path to change to")
+        self.add_arg("path", self.command_line)
+
+    async def parse_dictionary(self, dictionary_arguments):
+        self.load_args_from_dictionary(dictionary_arguments)
+
+
+
 class ShellArguments(TaskArguments):
     def __init__(self, command_line, **kwargs):
         super().__init__(command_line, **kwargs)
@@ -306,6 +327,26 @@ class ExitCommand(CommandBase):
     )
 
     async def create_tasking(self, task: MythicTask) -> MythicTask:
+        return task
+
+    async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:
+        resp = PTTaskProcessResponseMessageResponse(TaskID=task.Task.ID, Success=True)
+        return resp
+
+class CdCommand(CommandBase):
+    cmd = "cd"
+    needs_admin = False
+    help_cmd = "cd {path}"
+    description = "Change directory to {path}."
+    version = 1
+    author = "@nxvh"
+    argument_class = CdArguments
+    attributes = CommandAttributes(
+        supported_os=[SupportedOS.Windows]
+    )
+
+    async def create_tasking(self, task: MythicTask) -> MythicTask:
+        task.display_params = task.args.get_arg("path")
         return task
 
     async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:

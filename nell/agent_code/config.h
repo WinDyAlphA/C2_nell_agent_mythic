@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
             #define CONFIG_H
 
-            #define CONFIG_INIT_UUID "b54924cf-6d53-4a97-a248-15b4f4344549"
+            #define CONFIG_INIT_UUID "48a6c2ee-2505-4a2e-a7e6-4ba0ded0b409"
             #define CONFIG_HOSTNAME L"192.168.1.83"
             #define CONFIG_ENDPOINT L"index"
             #define CONFIG_SSL FALSE
