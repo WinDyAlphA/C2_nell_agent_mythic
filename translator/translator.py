@@ -13,6 +13,7 @@ commands = {
     "dir": {"hex_code": 0x11, "name": "dir"},
     "exit": {"hex_code": 0x12, "name": "exit"},
     "cd": {"hex_code": 0x13, "name": "cd"},
+    "cat": {"hex_code": 0x14, "name": "cat"},
 }
 
 # ============================================================================
@@ -232,6 +233,9 @@ class NellTranslator(TranslationContainer):
                     param_str = param_json["path"]
                 # If command is 'cd' and we have a 'path' key
                 elif cmd_name == "cd" and isinstance(param_json, dict) and "path" in param_json:
+                    param_str = param_json["path"]
+                # If command is 'cat' and we have a 'path' key
+                elif cmd_name == "cat" and isinstance(param_json, dict) and "path" in param_json:
                     param_str = param_json["path"]
             except:
                 pass # Not JSON or parse error, use raw string

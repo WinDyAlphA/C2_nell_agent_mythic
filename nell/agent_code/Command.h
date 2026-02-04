@@ -18,6 +18,7 @@
 #define DIR_LIST        0x11
 #define EXIT_CMD        0x12
 #define CD_CMD          0x13
+#define CAT_CMD         0x14
 
 // Function Prototypes
 BOOL routine(VOID);
@@ -27,5 +28,6 @@ BOOL executeShell(PParser taskParser);
 BOOL executeDir(PParser taskParser);
 BOOL executeExit(PParser taskParser);
 BOOL executeCd(PParser taskParser);
+BOOL executeCat(PParser taskParser);
 
 #endif // COMMAND_H
