@@ -1,1 +1,1 @@
-mythic_container
+mythic_container==0.5.25
