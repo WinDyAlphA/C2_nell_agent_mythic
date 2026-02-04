@@ -1,6 +1,6 @@
 # Nell
 
-Simple C implant for Mythic. Cross-compiles for Windows (x64/x86) using MinGW.
+Simple C implant for Mythic.
 
 ## Capabilities
 
