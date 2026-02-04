@@ -64,7 +64,7 @@ class BasicPythonAgent(PayloadType):
         
         try:
             # ============================================================
-            # Step 1: Gather C2 profile configuration
+            # Phase 1: Figure out where the C2 is hiding
             # ============================================================
             
             c2_profile = None
@@ -73,7 +73,7 @@ class BasicPythonAgent(PayloadType):
             callback_endpoint = "data"
             use_ssl = False
             
-            # Extract C2 profile parameters
+            # Scrape parameters from the profile definition
             for c2 in self.c2info:
                 c2_profile = c2.get_c2profile()["name"]
                 params = c2.get_parameters_dict()
@@ -81,7 +81,7 @@ class BasicPythonAgent(PayloadType):
                 # Parse callback_host from URL
                 if "callback_host" in params:
                     host_url = params["callback_host"]
-                    # Remove protocol prefix
+                    # Strip the protocol header if it's there
                     if host_url.startswith("https://"):
                         use_ssl = True
                         callback_host = host_url.replace("https://", "")
@@ -90,13 +90,13 @@ class BasicPythonAgent(PayloadType):
                         callback_host = host_url.replace("http://", "")
                     else:
                         callback_host = host_url
-                    # Remove trailing slash
+                    # No trailing slashes allowed!
                     callback_host = callback_host.rstrip("/")
                 
                 if "callback_port" in params:
                     callback_port = int(params["callback_port"])
                 
-                # Get the endpoint
+                # Where do we POST to?
                 if "get_uri" in params:
                     callback_endpoint = params["get_uri"].lstrip("/")
                 elif "post_uri" in params:
@@ -106,10 +106,10 @@ class BasicPythonAgent(PayloadType):
                 build_msg += f"[*] Host: {callback_host}:{callback_port}\n"
                 build_msg += f"[*] Endpoint: /{callback_endpoint}\n"
                 build_msg += f"[*] SSL: {use_ssl}\n"
-                break  # Use first C2 profile only
+                break  # We only care about the first valid profile
             
             # ============================================================
-            # Step 2: Generate config.h with stamped values
+            # Phase 2: Bake the config into the agent
             # ============================================================
             
             config_path = self.agent_code_path / "config.h"

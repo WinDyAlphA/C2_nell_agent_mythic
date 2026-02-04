@@ -4,14 +4,14 @@
 
 #pragma comment(lib, "winhttp.lib")
 
-// Abstract transport layer
+// Basic transport abstraction layer - keeping it extensible
 PParser sendAndReceive(PBYTE data, SIZE_T size)
 {
 #ifdef HTTP_TRANSPORT
     return makeHTTPRequest(data, size);
 #endif
 
-    // Add other protocols here (DNS, SMB, etc.)
+    // Placeholder for other cool transport protocols (DNS, SMB, etc.)
     return NULL;
 }
 

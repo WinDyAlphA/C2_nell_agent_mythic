@@ -18,13 +18,13 @@ commands = {
 }
 
 # ============================================================================
-# Helper Functions
+# Helpers - Because parsing binary manually is pain
 # ============================================================================
 
 def getBytesWithSize(data: bytes) -> tuple[bytes, bytes]:
     """
-    Reads a size-prefixed byte array.
-    Returns (extracted_data, remaining_data)
+    Reads a chunk prefixed by its 4-byte big-endian size.
+    Returns (chunk, leftovers)
     """
     if len(data) < 4:
         return b"", data
@@ -35,8 +35,8 @@ def getBytesWithSize(data: bytes) -> tuple[bytes, bytes]:
 
 def getInt32(data: bytes) -> tuple[int, bytes]:
     """
-    Reads a 4-byte big-endian integer.
-    Returns (value, remaining_data)
+    Grab a 4-byte int.
+    Returns (value, leftovers)
     """
     if len(data) < 4:
         return 0, data
@@ -46,8 +46,8 @@ def getInt32(data: bytes) -> tuple[int, bytes]:
 
 def getByte(data: bytes) -> tuple[int, bytes]:
     """
-    Reads a single byte.
-    Returns (value, remaining_data)
+    Grab a single byte.
+    Returns (value, leftovers)
     """
     if len(data) < 1:
         return 0, data
@@ -56,8 +56,8 @@ def getByte(data: bytes) -> tuple[int, bytes]:
 
 def getStringWithSize(data: bytes) -> tuple[str, bytes]:
     """
-    Reads a size-prefixed string (UTF-8/cp850).
-    Returns (string, remaining_data)
+    Extract a string (prefixed with size).
+    Returns (string, leftovers)
     """
     raw, remaining = getBytesWithSize(data)
     try:
