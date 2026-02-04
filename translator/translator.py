@@ -14,6 +14,7 @@ commands = {
     "exit": {"hex_code": 0x12, "name": "exit"},
     "cd": {"hex_code": 0x13, "name": "cd"},
     "cat": {"hex_code": 0x14, "name": "cat"},
+    "ps": {"hex_code": 0x15, "name": "ps"},
 }
 
 # ============================================================================

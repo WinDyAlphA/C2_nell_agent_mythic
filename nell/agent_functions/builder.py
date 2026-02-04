@@ -391,3 +391,33 @@ class CatCommand(CommandBase):
     async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:
         resp = PTTaskProcessResponseMessageResponse(TaskID=task.Task.ID, Success=True)
         return resp
+
+class PsArguments(TaskArguments):
+    def __init__(self, command_line, **kwargs):
+        super().__init__(command_line, **kwargs)
+        self.args = []
+
+    async def parse_arguments(self):
+        pass
+
+    async def parse_dictionary(self, dictionary_arguments):
+        pass
+
+class PsCommand(CommandBase):
+    cmd = "ps"
+    needs_admin = False
+    help_cmd = "ps"
+    description = "List running processes."
+    version = 1
+    author = "@nxvh"
+    argument_class = PsArguments
+    attributes = CommandAttributes(
+        supported_os=[SupportedOS.Windows]
+    )
+
+    async def create_tasking(self, task: MythicTask) -> MythicTask:
+        return task
+
+    async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:
+        resp = PTTaskProcessResponseMessageResponse(TaskID=task.Task.ID, Success=True)
+        return resp
