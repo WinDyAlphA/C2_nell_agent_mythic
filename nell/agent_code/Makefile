@@ -13,7 +13,7 @@ LDFLAGS = -lwinhttp -liphlpapi -lnetapi32 -lws2_32
 DEBUG_CFLAGS = -Wall -g -DDEBUG_BUILD
 
 # Sources
-SRCS = nell.c Package.c Parser.c Transport.c Utils.c Checkin.c Command.c
+SRCS = nell.c Package.c Parser.c Transport.c Utils.c Checkin.c Command.c tasks/shell.c tasks/dir.c tasks/exit.c tasks/cd.c tasks/cat.c tasks/ps.c tasks/download.c
 OBJS = $(SRCS:.c=.o)
 
 # Output

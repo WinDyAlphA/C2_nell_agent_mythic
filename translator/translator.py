@@ -15,6 +15,8 @@ commands = {
     "cd": {"hex_code": 0x13, "name": "cd"},
     "cat": {"hex_code": 0x14, "name": "cat"},
     "ps": {"hex_code": 0x15, "name": "ps"},
+    "download_start": {"hex_code": 0x03, "name": "download_start"},
+    "download_chunk": {"hex_code": 0x04, "name": "download_chunk"},
 }
 
 # ============================================================================
@@ -144,6 +146,21 @@ class NellTranslator(TranslationContainer):
             return response
         
         command_byte = data[0]
+
+        # Fix: Agent sends [UUID(36)] [CommandByte] ...
+        # Check if we have a UUID prefix
+        if len(data) >= 37:
+            possible_cmd = data[36]
+            if possible_cmd in [
+                commands["checkin"]["hex_code"],
+                commands["get_tasking"]["hex_code"],
+                commands["post_response"]["hex_code"],
+                commands["download_start"]["hex_code"],
+                commands["download_chunk"]["hex_code"]
+            ]:
+                # It's likely the UUID prefix
+                data = data[36:]
+                command_byte = data[0]
         
         if command_byte == commands["checkin"]["hex_code"]:
             response.Message = checkIn(data[1:])
@@ -182,6 +199,58 @@ class NellTranslator(TranslationContainer):
                 ]
             }
             
+        elif command_byte == commands["download_start"]["hex_code"]:
+            # Download Start: [0x03] [UUID Size][UUID] [TotalChunks] [Path Size][Path] [ChunkSize]
+            
+            data = data[1:]
+            uuid_task, data = getStringWithSize(data)
+            total_chunks, data = getInt32(data)
+            path, data = getStringWithSize(data)
+            chunk_size, data = getInt32(data)
+            
+            response.Message = {
+                "action": "post_response",
+                "responses": [
+                    {
+                        "task_id": uuid_task,
+                        "download": {
+                            "total_chunks": total_chunks,
+                            "filename": path,
+                            "chunk_size": chunk_size,
+                            "is_screenshot": False
+                        }
+                    }
+                ]
+            }
+
+        elif command_byte == commands["download_chunk"]["hex_code"]:
+            # Download Chunk: [0x04] [UUID Size][UUID] [ChunkNum] [FileID Size][FileID] [Chunk Size][Chunk Data] [BytesRead]
+            
+            data = data[1:]
+            uuid_task, data = getStringWithSize(data)
+            chunk_num, data = getInt32(data)
+            file_id, data = getStringWithSize(data)
+            chunk_data, data = getBytesWithSize(data)
+            bytes_read, data = getInt32(data)
+            
+            # Helper to encode chunk data
+            encoded_chunk = base64.b64encode(chunk_data).decode()
+            
+            response.Message = {
+                "action": "post_response",
+                "responses": [
+                    {
+                        "task_id": uuid_task,
+                        "download": {
+                            "chunk_num": chunk_num,
+                            "file_id": file_id,
+                            "chunk_data": encoded_chunk,
+                            "chunk_size": bytes_read # Mythic docs say optional but helpful? 
+                        }
+                    }
+                ]
+            }
+
         else:
             response.Success = False
         
@@ -200,6 +269,33 @@ class NellTranslator(TranslationContainer):
         
         elif mythic_message.get("action") == "get_tasking":
             response.Message = self.responseTasking(mythic_message.get("tasks", []))
+
+        elif mythic_message.get("action") == "post_response":
+            # Check for file_id in responses to send back to agent
+            # Mythic sends: {"action": "post_response", "responses": [{"task_id": "...", "status": "success", "file_id": "..."}]}
+            
+            responses = mythic_message.get("responses", [])
+            data = b""
+            
+            for resp in responses:
+                if "file_id" in resp and resp["file_id"]:
+                    # Found a file_id (start of download)
+                    # Send to Agent: [0x03] [UUID Size][UUID] [FileID Size][FileID]
+                    
+                    cmd_id = commands["download_start"]["hex_code"]
+                    uuid_bytes = resp["task_id"].encode()
+                    file_id_bytes = resp["file_id"].encode()
+                    
+                    payload = len(uuid_bytes).to_bytes(4, "big") + uuid_bytes
+                    payload += len(file_id_bytes).to_bytes(4, "big") + file_id_bytes
+                    
+                    chunk = cmd_id.to_bytes(1, "big") + payload
+                    data += chunk
+            
+            if data:
+                response.Message = base64.b64encode(data)
+            else:
+                response.Message = b"" # No data to send back
         
         return response
 

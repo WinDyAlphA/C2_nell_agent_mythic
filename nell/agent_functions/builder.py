@@ -421,3 +421,42 @@ class PsCommand(CommandBase):
     async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:
         resp = PTTaskProcessResponseMessageResponse(TaskID=task.Task.ID, Success=True)
         return resp
+
+class DownloadArguments(TaskArguments):
+    def __init__(self, command_line, **kwargs):
+        super().__init__(command_line, **kwargs)
+        self.args = [
+            CommandParameter(
+                name="path",
+                type=ParameterType.String,
+                description="Path to file to download"
+            ),
+        ]
+
+    async def parse_arguments(self):
+        if len(self.command_line) == 0:
+            raise ValueError("Must supply a path to file")
+        self.add_arg("path", self.command_line)
+
+    async def parse_dictionary(self, dictionary_arguments):
+        self.load_args_from_dictionary(dictionary_arguments)
+
+class DownloadCommand(CommandBase):
+    cmd = "download"
+    needs_admin = False
+    help_cmd = "download {path}"
+    description = "Download a file from the target."
+    version = 1
+    author = "@nxvh"
+    argument_class = DownloadArguments
+    attributes = CommandAttributes(
+        supported_os=[SupportedOS.Windows]
+    )
+
+    async def create_tasking(self, task: MythicTask) -> MythicTask:
+        task.display_params = task.args.get_arg("path")
+        return task
+
+    async def process_response(self, task: PTTaskMessageAllData, response: any) -> PTTaskProcessResponseMessageResponse:
+        resp = PTTaskProcessResponseMessageResponse(TaskID=task.Task.ID, Success=True)
+        return resp

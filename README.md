@@ -38,10 +38,16 @@ Source is located in `/nell/agent_code/`. It uses a custom binary protocol for C
 
 - [ ] **Download**: Exfiltrate files from the target.
 - [ ] **Upload**: Send files to the target.
-- [ ] **Jobs**: Manage long-running tasks.
-- [ ] **Socks5**: Proxy support.
-- [ ] **HTTPS**: Use HTTPS instead of HTTP.
-- [ ] **DNS**: Use DNS instead of HTTP.
-- [ ] **Sleep mask**: Use sleep mask to evade detection.
+
 - [ ] **execute-assembly**: TMTC
 - [ ] **inline-assembly**: un peu moins bien que execute-assembly lol
+
+- [ ] **staging**: staging ajouter des fonction à la volée
+
+- [ ] **Socks5**: Proxy support.
+
+- [ ] **Jobs**: Manage long-running tasks.
+- [ ] **HTTPS**: Use HTTPS instead of HTTP.
+- [ ] **DNS**: Use DNS instead of HTTP.
+
+- [ ] **Sleep mask**: Use sleep mask to evade detection.

@@ -20,6 +20,11 @@
 #define CD_CMD          0x13
 #define CAT_CMD         0x14
 #define PS_CMD          0x15
+#define DOWNLOAD_CMD    0x16
+
+// Protocol opcodes for download
+#define DOWNLOAD_START  0x03
+#define DOWNLOAD_CHUNK  0x04
 
 // Function Prototypes
 BOOL routine(VOID);
@@ -31,5 +36,6 @@ BOOL executeExit(PParser taskParser);
 BOOL executeCd(PParser taskParser);
 BOOL executeCat(PParser taskParser);
 BOOL executePs(PParser taskParser);
+BOOL executeDownload(PParser taskParser);
 
 #endif // COMMAND_H
